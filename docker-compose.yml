@@ -10,4 +10,4 @@ services:
     volumes:
       - ./user_configs:/home/user_configs
     ports:
-      - 80:8080
+      - 888:8080
