@@ -5,6 +5,7 @@ load_dotenv()
 
 from utils.i18n import strings
 from datetime import datetime
+
 from ModelMerge.src.ModelMerge.utils import prompt
 from ModelMerge.src.ModelMerge.models import chatgpt, groq, claude3, gemini, vertex, PLUGINS, whisper, DuckChat
 from ModelMerge.src.ModelMerge.models.base import BaseAPI
@@ -309,6 +310,7 @@ def InitEngine(chat_id=None):
         whisperBot = whisper(api_key=api_key, api_url=api_url)
     if CLAUDE_API:
         claude3Bot = claude3(temperature=temperature, print_log=True)
+        SummaryBot = claude3(temperature=temperature, print_log=True)
     if GROQ_API_KEY:
         groqBot = groq(temperature=temperature)
     if GOOGLE_AI_API_KEY:
@@ -574,6 +576,8 @@ def update_initial_model():
             if "whisper" in model_item:
                 continue
             if "moderation" in model_item:
+                continue
+            if "embedding" in model_item:
                 continue
             set_models.add(model_item)
             # parts = [part for segment in model_item.split("-") for part in segment.split("@")]

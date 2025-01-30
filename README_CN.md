@@ -49,7 +49,7 @@ ChatGPT Telegram 机器人是一个强大的 Telegram 机器人，可以使用�
 | API_URL | 如果您使用的是OpenAI官方API，则无需设置此项。如果您使用的是第三方API，则需要填写第三方代理网站。默认值是：https://api.openai.com/v1/chat/completions | 否 |
 | GROQ_API_KEY | Groq官方API密钥。 | 否 |
 | GOOGLE_AI_API_KEY | Google AI 官方 API 密钥。使用此环境变量访问 Gemini 系列模型，包括 Gemini 1.5 pro 和 Gemini 1.5 flash。| 否 |
-| VERTEX_PRIVATE_KEY | 描述: Google Cloud Vertex AI 服务账户的私钥。格式: 包含服务账户私钥信息的 JSON 字符串。如何获取: 在 Google Cloud 控制台中创建一个服务账户，生成一个 JSON 密钥文件，并将其内容设置为此环境变量的值。 | 否 |
+| VERTEX_PRIVATE_KEY | 描述: Google Cloud Vertex AI 服务账户的私钥。格式: 包含服务账户私钥信息的 JSON 字符串里面的 private_key 字段的值，请使用双引号包裹私钥。如何获取: 在 Google Cloud 控制台中创建一个服务账户，生成一个 JSON 密钥文件，并将其内容里面的 private_key 字段的值使用双引号包裹后设置为此环境变量的值。 | 否 |
 | VERTEX_PROJECT_ID | 描述：您的 Google Cloud 项目 ID。格式：一个字符串，通常由小写字母、数字和连字符组成。如何获取：您可以在 Google Cloud 控制台的项目选择器中找到您的项目 ID。 | 否 |
 | VERTEX_CLIENT_EMAIL | 描述：Google Cloud Vertex AI 服务账户的电子邮件地址。格式：通常是 "service-account-name@developer.gserviceaccount.com" 形式的字符串。获取方式：在创建服务账户时生成，或可以在 Google Cloud 控制台的 "IAM & 管理" 部分的服务账户详细信息中查看。 | 否 |
 | claude_api_key | Claude 官方 API 密钥。 | 否 |
@@ -98,11 +98,23 @@ ChatGPT Telegram 机器人是一个强大的 Telegram 机器人，可以使用�
 
 ## Koyeb 远程部署
 
-一键部署：
+可以使用两种方式部署在 koyeb 上部署，一种是使用 Koyeb 提供的 docker 镜像一键部署，另一种是导入本仓库部署。这两种方式都是免费的。第一种方式部署简单，但是无法自动更新，第二种方式部署稍微复杂，但是可以自动更新。
+
+### 一键部署
+
+点击下面的按钮可以自动使用构建好的 docker 镜像一键部署：
 
 [![Deploy to Koyeb](https://www.koyeb.com/static/images/deploy/button.svg)](https://app.koyeb.com/deploy?type=docker&image=docker.io/yym68686/chatgpt:latest&name=chatbot)
 
-使用 Koyeb 部署时，必须添加环境变量 `WEB_HOOK`，否则机器人无法接收消息。使用类似 `https://appname.koyeb.app` 的字符串作为 `WEB_HOOK` 的值，Koyeb 会自动分配一个二级域名。
+⚠️ 注意：使用 Koyeb 部署时，必须添加环境变量 `WEB_HOOK`，否则机器人无法接收消息。使用类似 `https://appname.koyeb.app` 的字符串作为 `WEB_HOOK` 的值，Koyeb 会自动分配一个二级域名。
+
+### 仓库部署
+
+1. fork 本仓库 [点击 fork 本仓库](https://github.com/yym68686/ChatGPT-Telegram-Bot/fork)
+
+2. 部署时候需要选择以仓库的方式，`Run command` 设置为 `python3 bot.py`，`Exposed ports` 设置为 `8080`。
+
+3. [安装 pull](https://github.com/apps/pull) 自动同步本仓库。
 
 ## Zeabur 远程部署
 
@@ -255,6 +267,8 @@ docker logs -f chatbot
 
 ## 🚀 源代码本地部署
 
+python >= 3.10
+
 直接从源代码运行机器人而不使用docker，克隆仓库：
 
 ```bash
@@ -294,7 +308,7 @@ python bot.py
 
 3. 在 `ModelMerge/src/ModelMerge/plugins/config.py` 里面的 `PLUGINS` 字典里面添加键值对，键是插件的名称，值是插件的环境变量及其默认值。这个默认值是插件的开关，如果默认值是`True`，那么插件默认是开启的，如果默认值是 `False`，那么插件默认是关闭的，需要在用户在 `/info` 命令里面手动开启。
 
-4. 最后，在 `ModelMerge/src/ModelMerge/plugins/config.py` 里面的函数 `get_tools_result_async` 和 `get_tools_result` 添加插件调用的代码，当机器人需要调用插件的时候，会调用这个函数。你需要在这个函数里面添加插件的调用代码。
+4. 最后，在 `ModelMerge/src/ModelMerge/plugins/config.py` 里面的函数 `get_tools_result_async` 添加插件调用的代码，当机器人需要调用插件的时候，会调用这个函数。你需要在这个函数里面添加插件的调用代码。
 
 完成上面的步骤，你的插件就可以在机器人中使用了。🎉
 
@@ -332,9 +346,9 @@ your_webhook_domain.com {
 
 您可以在聊天窗口中使用 "/info" 命令在 GPT3.5/4/4o 和其他模型之间切换。
 
-- 它可以在一个组中部署吗？
+- 它可以在一个群组中部署吗？
 
-是的，它支持白名单以防止滥用和信息泄露。
+是的，它支持群组白名单以防止滥用和信息泄露。
 
 - 为什么我把机器人添加到群组后它不能说话？
 
@@ -346,7 +360,7 @@ your_webhook_domain.com {
 
 - GROUP_LIST、ADMIN_LIST 和白名单的设置如何影响机器人的行为？
 
-如果未设置白名单，所有人都可以使用机器人。如果设置了白名单，只有白名单中的用户可以使用机器人。如果设置了GROUP_LIST，只有GROUP_LIST中的群组可以使用机器人。如果同时设置了白名单和GROUP_LIST，群组中的所有人都可以使用机器人，但只有白名单中的用户可以私聊机器人。如果设置了ADMIN_LIST，只有ADMIN_LIST中的用户可以使用/info命令来更改机器人的设置。如果未设置ADMIN_LIST，所有人都可以使用/info命令来更改机器人的配置。
+如果未设置白名单，所有人都可以使用机器人。如果设置了白名单，只有白名单中的用户可以使用机器人。如果设置了GROUP_LIST，只有GROUP_LIST中的群组可以使用机器人。如果同时设置了白名单和GROUP_LIST，群组中的所有人都可以使用机器人，但只有白名单中的用户可以私聊机器人。如果设置了ADMIN_LIST，只有ADMIN_LIST中的用户可以使用/info命令来更改机器人的设置。如果未设置ADMIN_LIST，所有人都可以使用/info命令来更改机器人的配置。GROUP_LIST 也可以包含频道，频道ID以减号开头，后跟一串数字。
 
 - 我应该如何设置 API_URL？
 
@@ -454,10 +468,10 @@ duckduckgo AI: https://github.com/mrgick/duck_chat
 ## 赞助商
 
 我们感谢以下赞助商的支持：
-<!-- $300+$280+¥1200+¥300+$30+$25+$20+¥50 -->
+<!-- $300+$380+¥1200+¥300+$30+$25+$20+¥50 -->
 - @fasizhuanqian: 300 USDT
 
-- @ZETA: $280
+- @ZETA: $380
 
 - @yuerbujin: ¥1200
 
